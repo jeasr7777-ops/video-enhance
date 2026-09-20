@@ -27,8 +27,6 @@
       padding: 25px 0 45px;
     }
 
-    /* HEADER */
-
     header {
       display: flex;
       align-items: center;
@@ -86,8 +84,6 @@
       background: #171d2b;
     }
 
-    /* HERO */
-
     .hero {
       text-align: center;
       margin-bottom: 28px;
@@ -123,8 +119,6 @@
       line-height: 1.8;
     }
 
-    /* MAIN CARD */
-
     .card {
       background: rgba(13, 17, 27, .9);
       border: 1px solid #242d3c;
@@ -133,8 +127,6 @@
       box-shadow: 0 25px 80px rgba(0,0,0,.4);
       backdrop-filter: blur(15px);
     }
-
-    /* UPLOAD */
 
     .upload-box {
       border: 2px dashed #30394b;
@@ -189,8 +181,6 @@
       display: none;
     }
 
-    /* PREVIEW */
-
     .preview {
       display: none;
       margin-top: 20px;
@@ -206,8 +196,6 @@
       display: block;
       background: #000;
     }
-
-    /* TIKTOK READY */
 
     .tiktok-ready {
       margin-top: 22px;
@@ -294,8 +282,6 @@
       font-size: 10px;
     }
 
-    /* FPS */
-
     .fps-section {
       margin-top: 20px;
       background: #0a0e16;
@@ -352,8 +338,6 @@
       background: linear-gradient(135deg, #29265c, #14334a);
       box-shadow: 0 6px 22px rgba(108,99,255,.15);
     }
-
-    /* AI */
 
     .ai-box {
       margin-top: 18px;
@@ -434,8 +418,6 @@
       transform: translateX(23px);
     }
 
-    /* BUTTON */
-
     .enhance-btn {
       width: 100%;
       border: 0;
@@ -462,8 +444,6 @@
       transform: none;
       box-shadow: none;
     }
-
-    /* PROGRESS */
 
     .progress-box {
       display: none;
@@ -507,8 +487,6 @@
       font-size: 11px;
       margin-top: 10px;
     }
-
-    /* RESULT */
 
     .result {
       display: none;
@@ -554,8 +532,6 @@
       font-size: 13px;
     }
 
-    /* FOOTER */
-
     footer {
       text-align: center;
       margin-top: 25px;
@@ -563,10 +539,7 @@
       font-size: 10px;
     }
 
-    /* MOBILE */
-
     @media (max-width: 700px) {
-
       .container {
         width: 94%;
         padding-top: 20px;
@@ -612,7 +585,6 @@
     }
 
     @media (max-width: 400px) {
-
       .logo-text p {
         display: none;
       }
@@ -635,8 +607,6 @@
 <body>
 
 <div class="container">
-
-  <!-- HEADER -->
 
   <header>
 
@@ -671,9 +641,6 @@
 
   </header>
 
-
-  <!-- HERO -->
-
   <section class="hero">
 
     <div class="badge">
@@ -690,12 +657,7 @@
 
   </section>
 
-
-  <!-- CARD -->
-
   <main class="card">
-
-    <!-- UPLOAD -->
 
     <div
       class="upload-box"
@@ -731,9 +693,6 @@
 
     </div>
 
-
-    <!-- PREVIEW -->
-
     <div
       class="preview"
       id="previewBox"
@@ -746,9 +705,6 @@
       ></video>
 
     </div>
-
-
-    <!-- TIKTOK READY -->
 
     <div class="tiktok-ready">
 
@@ -779,7 +735,6 @@
         </div>
 
       </div>
-
 
       <div class="specs">
 
@@ -823,9 +778,6 @@
 
     </div>
 
-
-    <!-- FPS -->
-
     <div class="fps-section">
 
       <div class="setting-title">
@@ -839,7 +791,6 @@
         </span>
 
       </div>
-
 
       <div class="fps-options">
 
@@ -863,9 +814,6 @@
 
     </div>
 
-
-    <!-- AI -->
-
     <div class="ai-box">
 
       <div class="ai-info">
@@ -888,7 +836,6 @@
 
       </div>
 
-
       <label class="switch">
 
         <input
@@ -902,9 +849,6 @@
 
     </div>
 
-
-    <!-- BUTTON -->
-
     <button
       class="enhance-btn"
       id="enhanceBtn"
@@ -913,9 +857,6 @@
     >
       🎵 TikTok Ready
     </button>
-
-
-    <!-- PROGRESS -->
 
     <div
       class="progress-box"
@@ -937,7 +878,6 @@
 
       </div>
 
-
       <div class="progress-track">
 
         <div
@@ -947,7 +887,6 @@
 
       </div>
 
-
       <div
         class="status"
         id="status"
@@ -956,9 +895,6 @@
       </div>
 
     </div>
-
-
-    <!-- RESULT -->
 
     <div
       class="result"
@@ -981,6 +917,7 @@
         class="download-btn"
         id="downloadBtn"
         href="#"
+        target="_self"
       >
         ⬇ تحميل الفيديو
       </a>
@@ -989,19 +926,13 @@
 
   </main>
 
-
   <footer>
     Video Enhance • TikTok Ready
   </footer>
 
 </div>
 
-
 <script>
-
-  // ===============================
-  // ELEMENTS
-  // ===============================
 
   const uploadBox =
     document.getElementById("uploadBox");
@@ -1033,9 +964,6 @@
   const progressPercent =
     document.getElementById("progressPercent");
 
-  const progressTitle =
-    document.getElementById("progressTitle");
-
   const status =
     document.getElementById("status");
 
@@ -1048,35 +976,16 @@
   const fpsText =
     document.getElementById("fpsText");
 
-
-  // ===============================
-  // VARIABLES
-  // ===============================
-
   let selectedFile = null;
-
   let selectedFps = 60;
-
   let previewUrl = null;
-
-
-  // ===============================
-  // UPLOAD CLICK
-  // ===============================
 
   uploadBox.addEventListener(
     "click",
     () => {
-
       videoInput.click();
-
     }
   );
-
-
-  // ===============================
-  // FILE SELECT
-  // ===============================
 
   videoInput.addEventListener(
     "change",
@@ -1086,17 +995,10 @@
         return;
       }
 
-      setVideo(
-        videoInput.files[0]
-      );
+      setVideo(videoInput.files[0]);
 
     }
   );
-
-
-  // ===============================
-  // SET VIDEO
-  // ===============================
 
   function setVideo(file) {
 
@@ -1105,53 +1007,35 @@
       !file.type.startsWith("video/")
     ) {
 
-      alert(
-        "اختر ملف فيديو فقط"
-      );
-
+      alert("اختر ملف فيديو فقط");
       return;
-    }
 
+    }
 
     selectedFile = file;
 
     fileName.textContent =
       "✓ " + file.name;
 
-
     enhanceBtn.disabled = false;
 
-
     if (previewUrl) {
-
-      URL.revokeObjectURL(
-        previewUrl
-      );
-
+      URL.revokeObjectURL(previewUrl);
     }
-
 
     previewUrl =
       URL.createObjectURL(file);
 
-
     previewVideo.src =
       previewUrl;
 
-
     previewBox.style.display =
       "block";
-
 
     resultBox.style.display =
       "none";
 
   }
-
-
-  // ===============================
-  // DRAG & DROP
-  // ===============================
 
   uploadBox.addEventListener(
     "dragover",
@@ -1166,7 +1050,6 @@
     }
   );
 
-
   uploadBox.addEventListener(
     "dragleave",
     () => {
@@ -1178,7 +1061,6 @@
     }
   );
 
-
   uploadBox.addEventListener(
     "drop",
     event => {
@@ -1189,24 +1071,15 @@
         "dragging"
       );
 
-
       const file =
         event.dataTransfer.files[0];
 
-
       if (file) {
-
         setVideo(file);
-
       }
 
     }
   );
-
-
-  // ===============================
-  // FPS
-  // ===============================
 
   document
     .querySelectorAll("[data-fps]")
@@ -1226,17 +1099,14 @@
 
             });
 
-
           button.classList.add(
             "active"
           );
-
 
           selectedFps =
             Number(
               button.dataset.fps
             );
-
 
           fpsText.textContent =
             selectedFps + " FPS";
@@ -1245,11 +1115,6 @@
       );
 
     });
-
-
-  // ===============================
-  // PROGRESS UI
-  // ===============================
 
   function updateProgress(
     percent,
@@ -1265,28 +1130,18 @@
         )
       );
 
-
     progressBar.style.width =
       value + "%";
-
 
     progressPercent.textContent =
       value + "%";
 
-
     if (message) {
-
       status.textContent =
         message;
-
     }
 
   }
-
-
-  // ===============================
-  // ENHANCE
-  // ===============================
 
   enhanceBtn.addEventListener(
     "click",
@@ -1299,60 +1154,44 @@
         );
 
         return;
+
       }
 
-
       enhanceBtn.disabled = true;
-
 
       progressBox.style.display =
         "block";
 
-
       resultBox.style.display =
         "none";
-
 
       updateProgress(
         1,
         "جاري تجهيز الفيديو..."
       );
 
-
       const formData =
         new FormData();
-
 
       formData.append(
         "video",
         selectedFile
       );
 
-
-      // السيرفر سيحول الفيديو
-      // إلى 1080x1920 بشكل افتراضي
-
       formData.append(
         "resolution",
         "1080p"
       );
 
-
       formData.append(
         "fps",
-        selectedFps
+        String(selectedFps)
       );
-
 
       formData.append(
         "ai",
-        aiToggle.checked
+        String(aiToggle.checked)
       );
-
-
-      // حركة بصرية أثناء الرفع
-      // لأن السيرفر الحالي لا يرسل
-      // progress حقيقي للمتصفح أثناء المعالجة
 
       let fakeProgress = 1;
 
@@ -1368,7 +1207,6 @@
                   ? 2
                   : 1;
 
-
             updateProgress(
               fakeProgress,
               fakeProgress < 25
@@ -1382,7 +1220,6 @@
 
         }, 700);
 
-
       try {
 
         const response =
@@ -1394,15 +1231,12 @@
             }
           );
 
-
         clearInterval(
           progressTimer
         );
 
-
         const data =
           await response.json();
-
 
         if (!response.ok) {
 
@@ -1413,40 +1247,59 @@
 
         }
 
+        if (
+          !data.download ||
+          typeof data.download !== "string"
+        ) {
+
+          throw new Error(
+            "لم يتم إنشاء رابط تحميل صحيح"
+          );
+
+        }
+
+        /*
+          إصلاح رابط التحميل:
+          نحول الرابط إلى URL كامل وصحيح
+          باستخدام عنوان الموقع الحالي.
+        */
+
+        const downloadUrl =
+          new URL(
+            data.download,
+            window.location.origin
+          ).href;
 
         updateProgress(
           100,
           "اكتملت المعالجة بنجاح"
         );
 
-
         progressBar.style.width =
           "100%";
 
-
         progressPercent.textContent =
           "100%";
-
 
         setTimeout(() => {
 
           progressBox.style.display =
             "none";
 
-
           resultBox.style.display =
             "block";
 
-
           downloadBtn.href =
-            data.download;
+            downloadUrl;
 
+          downloadBtn.removeAttribute(
+            "download"
+          );
 
           enhanceBtn.disabled =
             false;
 
         }, 600);
-
 
       } catch (error) {
 
@@ -1454,14 +1307,16 @@
           progressTimer
         );
 
-
         progressBox.style.display =
           "none";
-
 
         enhanceBtn.disabled =
           false;
 
+        console.error(
+          "Processing error:",
+          error
+        );
 
         alert(
           error.message ||
