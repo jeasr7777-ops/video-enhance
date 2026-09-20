@@ -1,1231 +1,835 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Video Enhance</title>
-
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  background:
-    radial-gradient(circle at top, #1b2438 0%, #080b12 45%, #05070b 100%);
-  color: white;
-  min-height: 100vh;
-}
-
-.container {
-  width: min(1050px, 92%);
-  margin: auto;
-  padding: 30px 0 50px;
-}
-
-/* HEADER */
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 35px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #6c63ff, #00c6ff);
-  font-size: 23px;
-  box-shadow: 0 10px 30px rgba(0,180,255,.2);
-}
-
-.logo-text h1 {
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.logo-text p {
-  color: #8e98aa;
-  font-size: 12px;
-  margin-top: 3px;
-}
-
-.tiktok-btn {
-  text-decoration: none;
-  color: white;
-  background: #111722;
-  border: 1px solid #252d3b;
-  padding: 11px 17px;
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: .2s;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.tiktok-btn:hover {
-  transform: translateY(-2px);
-  border-color: #5865ff;
-  background: #171d2b;
-}
-
-/* HERO */
-
-.hero {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.hero h2 {
-  font-size: clamp(30px, 6vw, 52px);
-  line-height: 1.1;
-  margin-bottom: 12px;
-  font-weight: 900;
-  background: linear-gradient(90deg,#fff,#aeb8ff,#71dfff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero p {
-  color: #9ba5b7;
-  font-size: 15px;
-  line-height: 1.7;
-}
-
-/* CARD */
-
-.card {
-  background: rgba(14,18,28,.88);
-  border: 1px solid #232b39;
-  border-radius: 24px;
-  padding: 25px;
-  box-shadow: 0 25px 70px rgba(0,0,0,.35);
-  backdrop-filter: blur(15px);
-}
-
-/* UPLOAD */
-
-.upload-box {
-  border: 2px dashed #30394a;
-  border-radius: 20px;
-  min-height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-  transition: .25s;
-  padding: 25px;
-  background: rgba(255,255,255,.015);
-}
-
-.upload-box:hover,
-.upload-box.dragging {
-  border-color: #6672ff;
-  background: rgba(102,114,255,.07);
-}
-
-.upload-icon {
-  width: 70px;
-  height: 70px;
-  border-radius: 22px;
-  margin: 0 auto 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  background: linear-gradient(135deg,#262d52,#162e42);
-}
-
-.upload-box h3 {
-  font-size: 19px;
-  margin-bottom: 8px;
-}
-
-.upload-box p {
-  color: #858fa2;
-  font-size: 13px;
-}
-
-.file-name {
-  margin-top: 12px;
-  color: #75d8ff;
-  font-size: 13px;
-  word-break: break-all;
-}
-
-#videoInput {
-  display: none;
-}
-
-/* PREVIEW */
-
-.preview {
-  display: none;
-  margin-top: 20px;
-  border-radius: 18px;
-  overflow: hidden;
-  background: #05070b;
-  border: 1px solid #252c3a;
-}
-
-.preview video {
-  width: 100%;
-  max-height: 430px;
-  display: block;
-}
-
-/* SETTINGS */
-
-.settings {
-  margin-top: 25px;
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 18px;
-}
-
-.setting {
-  background: #0b0f17;
-  border: 1px solid #222a38;
-  border-radius: 18px;
-  padding: 18px;
-}
-
-.setting-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 13px;
-}
-
-.setting-title span:first-child {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.setting-title span:last-child {
-  color: #7f8ba0;
-  font-size: 12px;
-}
-
-.options {
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap: 8px;
-}
-
-.option {
-  border: 1px solid #293244;
-  background: #111722;
-  color: #9ba5b7;
-  padding: 11px 5px;
-  border-radius: 11px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 12px;
-  transition: .2s;
-}
-
-.option:hover {
-  border-color: #6672ff;
-  color: white;
-}
-
-.option.active {
-  color: white;
-  border-color: #6c63ff;
-  background: linear-gradient(135deg,#29265c,#14324a);
-}
-
-/* AI */
-
-.ai-box {
-  margin-top: 18px;
-  border: 1px solid #273044;
-  background: linear-gradient(
-    135deg,
-    rgba(108,99,255,.08),
-    rgba(0,198,255,.05)
-  );
-  border-radius: 18px;
-  padding: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-}
-
-.ai-info {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
-
-.ai-icon {
-  width: 45px;
-  height: 45px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #24234d;
-  font-size: 22px;
-}
-
-.ai-info h3 {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.ai-info p {
-  color: #818c9f;
-  font-size: 11px;
-}
-
-/* SWITCH */
-
-.switch {
-  position: relative;
-  width: 52px;
-  height: 29px;
-  flex-shrink: 0;
-}
-
-.switch input {
-  display: none;
-}
-
-.slider {
-  position: absolute;
-  inset: 0;
-  background: #293141;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: .25s;
-}
-
-.slider:before {
-  content: "";
-  position: absolute;
-  width: 21px;
-  height: 21px;
-  left: 4px;
-  top: 4px;
-  background: white;
-  border-radius: 50%;
-  transition: .25s;
-}
-
-.switch input:checked + .slider {
-  background: linear-gradient(90deg,#645bff,#00bff5);
-}
-
-.switch input:checked + .slider:before {
-  transform: translateX(23px);
-}
-
-/* BUTTON */
-
-.enhance-btn {
-  width: 100%;
-  border: 0;
-  margin-top: 23px;
-  padding: 17px;
-  border-radius: 15px;
-  color: white;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  background: linear-gradient(90deg,#6258ff,#00bff5);
-  box-shadow: 0 12px 35px rgba(69,101,255,.25);
-  transition: .2s;
-}
-
-.enhance-btn:hover {
-  transform: translateY(-2px);
-}
-
-.enhance-btn:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* PROGRESS */
-
-.progress-box {
-  display: none;
-  margin-top: 25px;
-  background: #0a0e15;
-  border: 1px solid #242c39;
-  border-radius: 18px;
-  padding: 18px;
-}
-
-.progress-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 13px;
-}
-
-.progress-percent {
-  color: #74d9ff;
-  font-weight: 700;
-}
-
-.progress-track {
-  height: 9px;
-  background: #202735;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.progress-bar {
-  width: 0%;
-  height: 100%;
-  border-radius: 20px;
-  background: linear-gradient(90deg,#655bff,#00c7ff);
-  transition: width .3s;
-}
-
-.status {
-  color: #8994a8;
-  font-size: 11px;
-  margin-top: 10px;
-}
-
-/* RESULT */
-
-.result {
-  display: none;
-  margin-top: 25px;
-  text-align: center;
-  background: #0b1119;
-  border: 1px solid #263042;
-  border-radius: 20px;
-  padding: 23px;
-}
-
-.success-icon {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto auto 12px;
-  background: #153c31;
-  color: #5effb4;
-  font-size: 25px;
-}
-
-.result h3 {
-  margin-bottom: 7px;
-}
-
-.result p {
-  color: #8792a5;
-  font-size: 12px;
-  margin-bottom: 17px;
-}
-
-.download-btn {
-  display: inline-block;
-  text-decoration: none;
-  color: white;
-  padding: 13px 25px;
-  border-radius: 12px;
-  background: linear-gradient(90deg,#1b9d70,#13b98a);
-  font-weight: 700;
-  font-size: 13px;
-}
-
-/* FOOTER */
-
-footer {
-  text-align: center;
-  margin-top: 28px;
-  color: #596477;
-  font-size: 11px;
-}
-
-/* MOBILE */
-
-@media (max-width:700px) {
-
-  .container {
-    width: 94%;
-    padding-top: 22px;
-  }
-
-  header {
-    margin-bottom: 25px;
-  }
-
-  .logo-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .logo-text h1 {
-    font-size: 18px;
-  }
-
-  .tiktok-btn {
-    padding: 9px 12px;
-    font-size: 12px;
-  }
-
-  .hero h2 {
-    font-size: 34px;
-  }
-
-  .hero p {
-    font-size: 13px;
-  }
-
-  .card {
-    padding: 16px;
-    border-radius: 20px;
-  }
-
-  .settings {
-    grid-template-columns: 1fr;
-  }
-
-  .options {
-    grid-template-columns: repeat(4,1fr);
-  }
-
-  .upload-box {
-    min-height: 190px;
-  }
-}
-
-@media (max-width:400px) {
-
-  .logo-text p {
-    display: none;
-  }
-
-  .tiktok-btn span {
-    display: none;
-  }
-
-  .options {
-    gap: 5px;
-  }
-
-  .option {
-    font-size: 11px;
-    padding: 10px 2px;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Video Enhance</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #172033 0%, #080b12 45%, #05070b 100%);
+      color: white;
+      padding: 25px 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      margin: auto;
+    }
+
+    /* الهيدر */
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .logo span {
+      color: #00e5ff;
+    }
+
+    .subtitle {
+      color: #9da7b8;
+      margin-top: 8px;
+      font-size: 15px;
+    }
+
+    /* مكان الصورة لاحقًا */
+    .hero-image {
+      width: 100%;
+      height: 180px;
+      border-radius: 22px;
+      margin-bottom: 22px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 1px dashed #344054;
+      background: rgba(255,255,255,0.025);
+      color: #697386;
+      overflow: hidden;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* البطاقة */
+    .card {
+      background: rgba(14, 19, 30, 0.92);
+      border: 1px solid #263043;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    /* رفع الفيديو */
+    .upload-box {
+      border: 2px dashed #344054;
+      border-radius: 20px;
+      padding: 38px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .upload-box:hover {
+      border-color: #00e5ff;
+      background: rgba(0,229,255,.035);
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .upload-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .upload-text {
+      color: #8993a5;
+      font-size: 14px;
+    }
+
+    #videoInput {
+      display: none;
+    }
+
+    /* اسم الملف */
+    .file-name {
+      margin-top: 15px;
+      text-align: center;
+      color: #00e5ff;
+      font-size: 14px;
+      min-height: 20px;
+      word-break: break-word;
+    }
+
+    /* الخيارات */
+    .section-title {
+      margin-top: 25px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .option {
+      position: relative;
+    }
+
+    .option input {
+      display: none;
+    }
+
+    .option label {
+      display: block;
+      text-align: center;
+      padding: 15px 8px;
+      border: 1px solid #30394b;
+      border-radius: 14px;
+      cursor: pointer;
+      color: #aeb7c6;
+      transition: .2s;
+      font-weight: bold;
+    }
+
+    .option input:checked + label {
+      border-color: #00e5ff;
+      background: rgba(0,229,255,.10);
+      color: white;
+      box-shadow: 0 0 18px rgba(0,229,255,.10);
+    }
+
+    /* زر TikTok */
+    .tiktok-btn {
+      width: 100%;
+      margin-top: 22px;
+      padding: 17px;
+      border: 0;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #00e5ff, #007cff);
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0,140,255,.25);
+      transition: .2s;
+    }
+
+    .tiktok-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    .tiktok-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* التقدم */
+    .progress-section {
+      display: none;
+      margin-top: 25px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 9px;
+      font-size: 14px;
+      color: #aeb7c6;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #202838;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #00e5ff, #007cff);
+      transition: width .25s ease;
+    }
+
+    .status {
+      text-align: center;
+      color: #8f9bad;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    /* النتيجة */
+    .result {
+      display: none;
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 16px;
+      background: rgba(0,255,170,.06);
+      border: 1px solid rgba(0,255,170,.25);
+      text-align: center;
+    }
+
+    .result-title {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .download-btn {
+      display: inline-block;
+      text-decoration: none;
+      background: #00c98d;
+      color: white;
+      padding: 13px 25px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+
+    .error {
+      display: none;
+      margin-top: 15px;
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(255,50,70,.08);
+      border: 1px solid rgba(255,50,70,.25);
+      color: #ff8794;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      color: #555f70;
+      font-size: 12px;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px 10px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .logo {
+        font-size: 28px;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-image {
+        height: 140px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<header>
-
-<div class="logo">
-
-<div class="logo-icon">
-⚡
-</div>
-
-<div class="logo-text">
-
-<h1>
-Video Enhance
-</h1>
-
-<p>
-Professional Video Processing
-</p>
-
-</div>
-
-</div>
-
-<a
-class="tiktok-btn"
-href="https://www.tiktok.com/@s_a8y"
-target="_blank"
-rel="noopener noreferrer"
->
-♪ <span>TikTok</span>
-</a>
-
-</header>
-
-
-<section class="hero">
-
-<h2>
-طوّر جودة فيديوك
-</h2>
-
-<p>
-ارفع الفيديو واختر الجودة و FPS ثم ابدأ المعالجة
-</p>
-
-</section>
-
-
-<main class="card">
-
-
-<div
-class="upload-box"
-id="uploadBox"
->
-
-<div>
-
-<div class="upload-icon">
-🎬
-</div>
-
-<h3>
-ارفع الفيديو هنا
-</h3>
-
-<p>
-اضغط لاختيار فيديو أو اسحب الفيديو إلى هنا
-</p>
-
-<div
-class="file-name"
-id="fileName"
-></div>
-
-</div>
-
-<input
-type="file"
-id="videoInput"
-accept="video/*"
->
-
-</div>
-
-
-<div
-class="preview"
-id="previewBox"
->
-
-<video
-id="previewVideo"
-controls
-playsinline
-></video>
-
-</div>
-
-
-<div class="settings">
-
-
-<div class="setting">
-
-<div class="setting-title">
-
-<span>
-دقة الفيديو
-</span>
-
-<span id="resolutionText">
-720p
-</span>
-
-</div>
-
-<div class="options">
-
-<button
-class="option active"
-data-resolution="720p"
->
-720p
-</button>
-
-<button
-class="option"
-data-resolution="1080p"
->
-1080p
-</button>
-
-<button
-class="option"
-data-resolution="4k"
->
-4K
-</button>
-
-<button
-class="option"
-data-resolution="4k60"
->
-4K+
-</button>
-
-</div>
-
-</div>
-
-
-<div class="setting">
-
-<div class="setting-title">
-
-<span>
-معدل الإطارات
-</span>
-
-<span id="fpsText">
-30 FPS
-</span>
-
-</div>
-
-<div class="options">
-
-<button
-class="option active"
-data-fps="30"
->
-30
-</button>
-
-<button
-class="option"
-data-fps="60"
->
-60
-</button>
-
-<button
-class="option"
-data-fps="90"
->
-90
-</button>
-
-<button
-class="option"
-data-fps="120"
->
-120
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="ai-box">
-
-<div class="ai-info">
-
-<div class="ai-icon">
-🤖
-</div>
-
-<div>
-
-<h3>
-AI Enhancement
-</h3>
-
-<p>
-تحسين الفيديو باستخدام الذكاء الاصطناعي
-</p>
-
-</div>
-
-</div>
-
-
-<label class="switch">
-
-<input
-type="checkbox"
-id="aiToggle"
->
-
-<span class="slider"></span>
-
-</label>
-
-</div>
-
-
-<button
-class="enhance-btn"
-id="enhanceBtn"
-disabled
->
-✨ تحسين الفيديو
-</button>
-
-
-<div
-class="progress-box"
-id="progressBox"
->
-
-<div class="progress-top">
-
-<span>
-جاري معالجة الفيديو...
-</span>
-
-<span
-class="progress-percent"
-id="progressPercent"
->
-0%
-</span>
-
-</div>
-
-<div class="progress-track">
-
-<div
-class="progress-bar"
-id="progressBar"
-></div>
-
-</div>
-
-<div
-class="status"
-id="status"
->
-جاري تجهيز الفيديو...
-</div>
-
-</div>
-
-
-<div
-class="result"
-id="resultBox"
->
-
-<div class="success-icon">
-✓
-</div>
-
-<h3>
-تم تحسين الفيديو
-</h3>
-
-<p>
-الفيديو جاهز للتحميل
-</p>
-
-<a
-class="download-btn"
-id="downloadBtn"
-href="#"
->
-⬇ تحميل الفيديو
-</a>
-
-</div>
-
-</main>
-
-
-<footer>
-Video Enhance • Professional Video Processing
-</footer>
-
-</div>
+  <div class="container">
+
+    <header>
+      <div class="logo">
+        Video<span>Enhance</span>
+      </div>
+
+      <div class="subtitle">
+        حسّن فيديوهاتك وجهزها للنشر بجودة عالية
+      </div>
+    </header>
+
+    <!-- الصورة نضيفها هنا لاحقًا -->
+    <div class="hero-image">
+      <span id="imagePlaceholder">
+        مكان الصورة — 4K / 120FPS
+      </span>
+
+      <!--
+      لاحقًا نحط صورتك هنا:
+      <img src="image.jpg" alt="4K 120FPS">
+      -->
+    </div>
+
+    <div class="card">
+
+      <!-- رفع الفيديو -->
+      <label class="upload-box" for="videoInput">
+        <div class="upload-icon">🎬</div>
+
+        <div class="upload-title">
+          ارفع الفيديو
+        </div>
+
+        <div class="upload-text">
+          اضغط هنا لاختيار الفيديو من جهازك
+        </div>
+      </label>
+
+      <input
+        type="file"
+        id="videoInput"
+        accept="video/*"
+      >
+
+      <div class="file-name" id="fileName"></div>
+
+      <!-- FPS -->
+      <div class="section-title">
+        🎞️ معدل الإطارات
+      </div>
+
+      <div class="options">
+
+        <div class="option">
+          <input
+            type="radio"
+            name="fps"
+            id="fps60"
+            value="60"
+            checked
+          >
+
+          <label for="fps60">
+            60 FPS
+          </label>
+        </div>
+
+        <div class="option">
+          <input
+            type="radio"
+            name="fps"
+            id="fps120"
+            value="120"
+          >
+
+          <label for="fps120">
+            120 FPS
+          </label>
+        </div>
+
+        <div class="option">
+          <input
+            type="radio"
+            name="fps"
+            id="fpsOriginal"
+            value="original"
+          >
+
+          <label for="fpsOriginal">
+            الأصلي
+          </label>
+        </div>
+
+      </div>
+
+      <!-- الجودة -->
+      <div class="section-title">
+        💎 الجودة
+      </div>
+
+      <div class="options">
+
+        <div class="option">
+          <input
+            type="radio"
+            name="quality"
+            id="quality1080"
+            value="1080"
+          >
+
+          <label for="quality1080">
+            1080P
+          </label>
+        </div>
+
+        <div class="option">
+          <input
+            type="radio"
+            name="quality"
+            id="quality2k"
+            value="2k"
+          >
+
+          <label for="quality2k">
+            2K
+          </label>
+        </div>
+
+        <div class="option">
+          <input
+            type="radio"
+            name="quality"
+            id="quality4k"
+            value="4k"
+            checked
+          >
+
+          <label for="quality4k">
+            4K
+          </label>
+        </div>
+
+      </div>
+
+      <!-- زر TikTok -->
+      <button
+        class="tiktok-btn"
+        id="processBtn"
+        disabled
+      >
+        ⚡ TikTok Ready
+      </button>
+
+      <!-- التقدم -->
+      <div
+        class="progress-section"
+        id="progressSection"
+      >
+
+        <div class="progress-top">
+          <span>جاري تحسين الفيديو</span>
+          <span id="progressText">0%</span>
+        </div>
+
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            id="progressFill"
+          ></div>
+        </div>
+
+        <div
+          class="status"
+          id="status"
+        >
+          جاري تجهيز الفيديو...
+        </div>
+
+      </div>
+
+      <!-- الخطأ -->
+      <div
+        class="error"
+        id="errorBox"
+      ></div>
+
+      <!-- النتيجة -->
+      <div
+        class="result"
+        id="resultBox"
+      >
+
+        <div class="result-title">
+          ✅ تم تجهيز الفيديو بنجاح
+        </div>
+
+        <a
+          class="download-btn"
+          id="downloadBtn"
+          href="#"
+          download
+        >
+          📥 تحميل الفيديو
+        </a>
+
+      </div>
+
+    </div>
+
+    <footer>
+      VideoEnhance © 2026
+    </footer>
+
+  </div>
 
 
 <script>
 
-const uploadBox =
-document.getElementById("uploadBox");
+  const videoInput = document.getElementById("videoInput");
+  const fileName = document.getElementById("fileName");
+  const processBtn = document.getElementById("processBtn");
 
-const videoInput =
-document.getElementById("videoInput");
+  const progressSection =
+    document.getElementById("progressSection");
 
-const fileName =
-document.getElementById("fileName");
+  const progressFill =
+    document.getElementById("progressFill");
 
-const previewBox =
-document.getElementById("previewBox");
+  const progressText =
+    document.getElementById("progressText");
 
-const previewVideo =
-document.getElementById("previewVideo");
+  const status =
+    document.getElementById("status");
 
-const enhanceBtn =
-document.getElementById("enhanceBtn");
+  const resultBox =
+    document.getElementById("resultBox");
 
-const aiToggle =
-document.getElementById("aiToggle");
+  const downloadBtn =
+    document.getElementById("downloadBtn");
 
-const progressBox =
-document.getElementById("progressBox");
+  const errorBox =
+    document.getElementById("errorBox");
 
-const progressBar =
-document.getElementById("progressBar");
 
-const progressPercent =
-document.getElementById("progressPercent");
+  let selectedFile = null;
 
-const status =
-document.getElementById("status");
 
-const resultBox =
-document.getElementById("resultBox");
+  // اختيار الفيديو
+  videoInput.addEventListener("change", function () {
 
-const downloadBtn =
-document.getElementById("downloadBtn");
+    selectedFile = this.files[0];
 
-const resolutionText =
-document.getElementById("resolutionText");
+    resultBox.style.display = "none";
+    errorBox.style.display = "none";
 
-const fpsText =
-document.getElementById("fpsText");
+    if (!selectedFile) {
+      fileName.textContent = "";
+      processBtn.disabled = true;
+      return;
+    }
 
+    fileName.textContent =
+      "🎬 " + selectedFile.name;
 
-let selectedFile = null;
+    processBtn.disabled = false;
 
-let selectedResolution = "720p";
+  });
 
-let selectedFps = 30;
 
+  // زر TikTok Ready
+  processBtn.addEventListener("click", async function () {
 
-/* اختيار الفيديو */
+    if (!selectedFile) {
+      return;
+    }
 
-uploadBox.addEventListener(
-"click",
-() => {
-videoInput.click();
-}
-);
+    processBtn.disabled = true;
 
+    resultBox.style.display = "none";
+    errorBox.style.display = "none";
 
-videoInput.addEventListener(
-"change",
-() => {
+    progressSection.style.display = "block";
 
-if (!videoInput.files.length) {
-return;
-}
+    setProgress(1, "جاري رفع الفيديو...");
 
-setVideo(videoInput.files[0]);
 
-}
-);
+    const formData = new FormData();
 
+    formData.append("video", selectedFile);
 
-function setVideo(file) {
+    formData.append(
+      "fps",
+      document.querySelector(
+        'input[name="fps"]:checked'
+      ).value
+    );
 
-if (!file.type.startsWith("video/")) {
+    formData.append(
+      "quality",
+      document.querySelector(
+        'input[name="quality"]:checked'
+      ).value
+    );
 
-alert("اختر ملف فيديو فقط");
+    formData.append(
+      "mode",
+      "tiktok-ready"
+    );
 
-return;
-}
 
-selectedFile = file;
+    try {
 
-fileName.textContent =
-"✓ " + file.name;
+      /*
+        السيرفر المتوقع:
+        POST /process
+      */
 
-enhanceBtn.disabled = false;
+      const response = await uploadWithProgress(
+        "/process",
+        formData
+      );
 
-const url =
-URL.createObjectURL(file);
 
-previewVideo.src = url;
+      if (!response.ok) {
 
-previewBox.style.display =
-"block";
+        let message =
+          "حدث خطأ أثناء معالجة الفيديو.";
 
-}
+        try {
+          const data = await response.json();
 
+          if (data.message) {
+            message = data.message;
+          }
+        } catch (e) {}
 
-/* السحب والإفلات */
+        throw new Error(message);
+      }
 
-uploadBox.addEventListener(
-"dragover",
-(event) => {
 
-event.preventDefault();
+      setProgress(
+        95,
+        "جاري تجهيز الملف النهائي..."
+      );
 
-uploadBox.classList.add(
-"dragging"
-);
 
-}
-);
+      const data =
+        await response.json();
 
 
-uploadBox.addEventListener(
-"dragleave",
-() => {
+      if (!data.url) {
+        throw new Error(
+          "السيرفر لم يرجع رابط الفيديو."
+        );
+      }
 
-uploadBox.classList.remove(
-"dragging"
-);
 
-}
-);
+      setProgress(
+        100,
+        "اكتمل تجهيز الفيديو ✅"
+      );
 
 
-uploadBox.addEventListener(
-"drop",
-(event) => {
+      downloadBtn.href = data.url;
 
-event.preventDefault();
+      if (data.filename) {
+        downloadBtn.download =
+          data.filename;
+      }
 
-uploadBox.classList.remove(
-"dragging"
-);
 
-const file =
-event.dataTransfer.files[0];
+      resultBox.style.display = "block";
 
-if (file) {
-setVideo(file);
-}
 
-}
-);
+    } catch (error) {
 
+      console.error(error);
 
-/* الدقة */
+      progressSection.style.display = "none";
 
-document
-.querySelectorAll("[data-resolution]")
-.forEach(button => {
+      errorBox.textContent =
+        error.message ||
+        "حدث خطأ غير معروف.";
 
-button.addEventListener(
-"click",
-() => {
+      errorBox.style.display = "block";
 
-document
-.querySelectorAll("[data-resolution]")
-.forEach(btn =>
-btn.classList.remove("active")
-);
+    }
 
-button.classList.add("active");
 
-selectedResolution =
-button.dataset.resolution;
+    processBtn.disabled = false;
 
-resolutionText.textContent =
-selectedResolution.toUpperCase();
+  });
 
-}
-);
 
-});
+  // تحديث التقدم
+  function setProgress(percent, message) {
 
+    percent =
+      Math.max(
+        0,
+        Math.min(100, percent)
+      );
 
-/* FPS */
+    progressFill.style.width =
+      percent + "%";
 
-document
-.querySelectorAll("[data-fps]")
-.forEach(button => {
+    progressText.textContent =
+      Math.round(percent) + "%";
 
-button.addEventListener(
-"click",
-() => {
+    status.textContent =
+      message;
 
-document
-.querySelectorAll("[data-fps]")
-.forEach(btn =>
-btn.classList.remove("active")
-);
+  }
 
-button.classList.add("active");
 
-selectedFps =
-Number(button.dataset.fps);
+  // رفع الملف مع متابعة نسبة الرفع
+  function uploadWithProgress(url, formData) {
 
-fpsText.textContent =
-selectedFps + " FPS";
+    return new Promise(
+      (resolve, reject) => {
 
-}
-);
+        const xhr =
+          new XMLHttpRequest();
 
-});
 
+        xhr.open(
+          "POST",
+          url,
+          true
+        );
 
-/* معالجة الفيديو */
 
-enhanceBtn.addEventListener(
-"click",
-async () => {
+        xhr.upload.addEventListener(
+          "progress",
+          function (event) {
 
-if (!selectedFile) {
+            if (!event.lengthComputable) {
+              return;
+            }
 
-alert("اختر فيديو أولاً");
+            const percent =
+              (event.loaded /
+               event.total) * 80;
 
-return;
-}
+            setProgress(
+              Math.max(1, percent),
+              "جاري رفع الفيديو..."
+            );
 
+          }
+        );
 
-enhanceBtn.disabled = true;
 
-progressBox.style.display =
-"block";
+        xhr.addEventListener(
+          "load",
+          function () {
 
-resultBox.style.display =
-"none";
+            const response = {
 
-progressBar.style.width =
-"5%";
+              ok:
+                xhr.status >= 200 &&
+                xhr.status < 300,
 
-progressPercent.textContent =
-"5%";
+              status:
+                xhr.status,
 
-status.textContent =
-"جاري رفع الفيديو...";
+              async json() {
 
+                try {
+                  return JSON.parse(
+                    xhr.responseText
+                  );
+                } catch (e) {
 
-const formData =
-new FormData();
+                  return {
+                    message:
+                      xhr.responseText
+                  };
 
+                }
 
-formData.append(
-"video",
-selectedFile
-);
+              }
 
+            };
 
-formData.append(
-"resolution",
-selectedResolution
-);
+            resolve(response);
 
+          }
+        );
 
-formData.append(
-"fps",
-selectedFps
-);
 
+        xhr.addEventListener(
+          "error",
+          function () {
 
-formData.append(
-"ai",
-aiToggle.checked
-);
+            reject(
+              new Error(
+                "تعذر الاتصال بالسيرفر."
+              )
+            );
 
+          }
+        );
 
-try {
 
-const response =
-await fetch(
-"/api/enhance",
-{
-method: "POST",
-body: formData
-}
-);
+        xhr.addEventListener(
+          "abort",
+          function () {
 
+            reject(
+              new Error(
+                "تم إلغاء رفع الفيديو."
+              )
+            );
 
-progressBar.style.width =
-"35%";
+          }
+        );
 
-progressPercent.textContent =
-"35%";
 
-status.textContent =
-"جاري معالجة الفيديو...";
+        xhr.send(formData);
 
+      }
+    );
 
-const data =
-await response.json();
-
-
-if (!response.ok) {
-
-throw new Error(
-data.error ||
-"حدث خطأ أثناء المعالجة"
-);
-
-}
-
-
-progressBar.style.width =
-"100%";
-
-progressPercent.textContent =
-"100%";
-
-status.textContent =
-"اكتملت المعالجة";
-
-
-setTimeout(
-() => {
-
-progressBox.style.display =
-"none";
-
-resultBox.style.display =
-"block";
-
-downloadBtn.href =
-data.download;
-
-},
-500
-);
-
-
-}
-catch (error) {
-
-progressBox.style.display =
-"none";
-
-enhanceBtn.disabled =
-false;
-
-alert(
-error.message ||
-"حدث خطأ أثناء معالجة الفيديو"
-);
-
-}
-
-}
-);
+  }
 
 </script>
 
