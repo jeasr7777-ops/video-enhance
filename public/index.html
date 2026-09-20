@@ -1,1194 +1,1231 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Video Enhance</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, #1b2438 0%, #080b12 45%, #05070b 100%);
-      color: #fff;
-      min-height: 100vh;
-    }
-
-    .container {
-      width: min(1050px, 92%);
-      margin: auto;
-      padding: 35px 0 50px;
-    }
-
-    /* HEADER */
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 35px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #6c63ff, #00c6ff);
-      font-size: 23px;
-      box-shadow: 0 10px 30px rgba(0, 180, 255, .2);
-    }
-
-    .logo-text h1 {
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    .logo-text p {
-      color: #8e98aa;
-      font-size: 12px;
-      margin-top: 3px;
-    }
-
-    .tiktok-btn {
-      text-decoration: none;
-      color: white;
-      background: #111722;
-      border: 1px solid #252d3b;
-      padding: 11px 17px;
-      border-radius: 13px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: .2s;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .tiktok-btn:hover {
-      transform: translateY(-2px);
-      border-color: #5865ff;
-      background: #171d2b;
-    }
-
-    /* HERO */
-
-    .hero {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .hero h2 {
-      font-size: clamp(30px, 6vw, 52px);
-      line-height: 1.1;
-      margin-bottom: 12px;
-      font-weight: 900;
-      background: linear-gradient(90deg, #fff, #aeb8ff, #71dfff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      color: #9ba5b7;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    /* CARD */
-
-    .card {
-      background: rgba(14, 18, 28, .88);
-      border: 1px solid #232b39;
-      border-radius: 24px;
-      padding: 25px;
-      box-shadow: 0 25px 70px rgba(0,0,0,.35);
-      backdrop-filter: blur(15px);
-    }
-
-    /* UPLOAD */
-
-    .upload-box {
-      border: 2px dashed #30394a;
-      border-radius: 20px;
-      min-height: 220px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-      transition: .25s;
-      padding: 25px;
-      background: rgba(255,255,255,.015);
-    }
-
-    .upload-box:hover,
-    .upload-box.dragging {
-      border-color: #6672ff;
-      background: rgba(102,114,255,.07);
-    }
-
-    .upload-icon {
-      width: 70px;
-      height: 70px;
-      border-radius: 22px;
-      margin: 0 auto 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      background: linear-gradient(135deg, #262d52, #162e42);
-    }
-
-    .upload-box h3 {
-      font-size: 19px;
-      margin-bottom: 8px;
-    }
-
-    .upload-box p {
-      color: #858fa2;
-      font-size: 13px;
-    }
-
-    .file-name {
-      margin-top: 12px;
-      color: #75d8ff;
-      font-size: 13px;
-      word-break: break-all;
-    }
-
-    #videoInput {
-      display: none;
-    }
-
-    /* PREVIEW */
-
-    .preview {
-      display: none;
-      margin-top: 20px;
-      border-radius: 18px;
-      overflow: hidden;
-      background: #05070b;
-      border: 1px solid #252c3a;
-    }
-
-    .preview video {
-      width: 100%;
-      max-height: 430px;
-      display: block;
-    }
-
-    /* SETTINGS */
-
-    .settings {
-      margin-top: 25px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
-    }
-
-    .setting {
-      background: #0b0f17;
-      border: 1px solid #222a38;
-      border-radius: 18px;
-      padding: 18px;
-    }
-
-    .setting-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 13px;
-    }
-
-    .setting-title span:first-child {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .setting-title span:last-child {
-      color: #7f8ba0;
-      font-size: 12px;
-    }
-
-    .options {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .option {
-      border: 1px solid #293244;
-      background: #111722;
-      color: #9ba5b7;
-      padding: 11px 5px;
-      border-radius: 11px;
-      cursor: pointer;
-      text-align: center;
-      font-size: 12px;
-      transition: .2s;
-    }
-
-    .option:hover {
-      border-color: #6672ff;
-      color: white;
-    }
-
-    .option.active {
-      color: white;
-      border-color: #6c63ff;
-      background: linear-gradient(135deg, #29265c, #14324a);
-      box-shadow: 0 5px 20px rgba(108,99,255,.15);
-    }
-
-    /* AI */
-
-    .ai-box {
-      margin-top: 18px;
-      border: 1px solid #273044;
-      background: linear-gradient(135deg, rgba(108,99,255,.08), rgba(0,198,255,.05));
-      border-radius: 18px;
-      padding: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .ai-info {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-    }
-
-    .ai-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #24234d;
-      font-size: 22px;
-    }
-
-    .ai-info h3 {
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-    .ai-info p {
-      color: #818c9f;
-      font-size: 11px;
-    }
-
-    /* SWITCH */
-
-    .switch {
-      position: relative;
-      width: 52px;
-      height: 29px;
-      flex-shrink: 0;
-    }
-
-    .switch input {
-      display: none;
-    }
-
-    .slider {
-      position: absolute;
-      inset: 0;
-      background: #293141;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: .25s;
-    }
-
-    .slider:before {
-      content: "";
-      position: absolute;
-      width: 21px;
-      height: 21px;
-      left: 4px;
-      top: 4px;
-      background: white;
-      border-radius: 50%;
-      transition: .25s;
-    }
-
-    .switch input:checked + .slider {
-      background: linear-gradient(90deg, #645bff, #00bff5);
-    }
-
-    .switch input:checked + .slider:before {
-      transform: translateX(23px);
-    }
-
-    /* BUTTON */
-
-    .enhance-btn {
-      width: 100%;
-      border: 0;
-      margin-top: 23px;
-      padding: 17px;
-      border-radius: 15px;
-      color: white;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      background: linear-gradient(90deg, #6258ff, #00bff5);
-      box-shadow: 0 12px 35px rgba(69, 101, 255, .25);
-      transition: .2s;
-    }
-
-    .enhance-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 40px rgba(69, 101, 255, .35);
-    }
-
-    .enhance-btn:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* PROGRESS */
-
-    .progress-box {
-      display: none;
-      margin-top: 25px;
-      background: #0a0e15;
-      border: 1px solid #242c39;
-      border-radius: 18px;
-      padding: 18px;
-    }
-
-    .progress-top {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 13px;
-    }
-
-    .progress-percent {
-      color: #74d9ff;
-      font-weight: 700;
-    }
-
-    .progress-track {
-      height: 9px;
-      background: #202735;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      border-radius: 20px;
-      background: linear-gradient(90deg, #655bff, #00c7ff);
-      transition: width .3s;
-    }
-
-    .status {
-      color: #8994a8;
-      font-size: 11px;
-      margin-top: 10px;
-    }
-
-    /* RESULT */
-
-    .result {
-      display: none;
-      margin-top: 25px;
-      text-align: center;
-      background: #0b1119;
-      border: 1px solid #263042;
-      border-radius: 20px;
-      padding: 23px;
-    }
-
-    .success-icon {
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: auto auto 12px;
-      background: #153c31;
-      color: #5effb4;
-      font-size: 25px;
-    }
-
-    .result h3 {
-      margin-bottom: 7px;
-    }
-
-    .result p {
-      color: #8792a5;
-      font-size: 12px;
-      margin-bottom: 17px;
-    }
-
-    .download-btn {
-      display: inline-block;
-      text-decoration: none;
-      color: white;
-      padding: 13px 25px;
-      border-radius: 12px;
-      background: linear-gradient(90deg, #1b9d70, #13b98a);
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    /* FOOTER */
-
-    footer {
-      text-align: center;
-      margin-top: 28px;
-      color: #596477;
-      font-size: 11px;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 700px) {
-      .container {
-        width: 94%;
-        padding-top: 22px;
-      }
-
-      header {
-        margin-bottom: 25px;
-      }
-
-      .logo-icon {
-        width: 42px;
-        height: 42px;
-      }
-
-      .logo-text h1 {
-        font-size: 18px;
-      }
-
-      .tiktok-btn {
-        padding: 9px 12px;
-        font-size: 12px;
-      }
-
-      .hero h2 {
-        font-size: 34px;
-      }
-
-      .hero p {
-        font-size: 13px;
-      }
-
-      .card {
-        padding: 16px;
-        border-radius: 20px;
-      }
-
-      .settings {
-        grid-template-columns: 1fr;
-      }
-
-      .options {
-        grid-template-columns: repeat(4, 1fr);
-      }
-
-      .upload-box {
-        min-height: 190px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .logo-text p {
-        display: none;
-      }
-
-      .tiktok-btn span {
-        display: none;
-      }
-
-      .options {
-        gap: 5px;
-      }
-
-      .option {
-        font-size: 11px;
-        padding: 10px 2px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Video Enhance</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at top, #1b2438 0%, #080b12 45%, #05070b 100%);
+  color: white;
+  min-height: 100vh;
+}
+
+.container {
+  width: min(1050px, 92%);
+  margin: auto;
+  padding: 30px 0 50px;
+}
+
+/* HEADER */
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6c63ff, #00c6ff);
+  font-size: 23px;
+  box-shadow: 0 10px 30px rgba(0,180,255,.2);
+}
+
+.logo-text h1 {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.logo-text p {
+  color: #8e98aa;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.tiktok-btn {
+  text-decoration: none;
+  color: white;
+  background: #111722;
+  border: 1px solid #252d3b;
+  padding: 11px 17px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: .2s;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tiktok-btn:hover {
+  transform: translateY(-2px);
+  border-color: #5865ff;
+  background: #171d2b;
+}
+
+/* HERO */
+
+.hero {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.hero h2 {
+  font-size: clamp(30px, 6vw, 52px);
+  line-height: 1.1;
+  margin-bottom: 12px;
+  font-weight: 900;
+  background: linear-gradient(90deg,#fff,#aeb8ff,#71dfff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  color: #9ba5b7;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* CARD */
+
+.card {
+  background: rgba(14,18,28,.88);
+  border: 1px solid #232b39;
+  border-radius: 24px;
+  padding: 25px;
+  box-shadow: 0 25px 70px rgba(0,0,0,.35);
+  backdrop-filter: blur(15px);
+}
+
+/* UPLOAD */
+
+.upload-box {
+  border: 2px dashed #30394a;
+  border-radius: 20px;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: .25s;
+  padding: 25px;
+  background: rgba(255,255,255,.015);
+}
+
+.upload-box:hover,
+.upload-box.dragging {
+  border-color: #6672ff;
+  background: rgba(102,114,255,.07);
+}
+
+.upload-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 22px;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background: linear-gradient(135deg,#262d52,#162e42);
+}
+
+.upload-box h3 {
+  font-size: 19px;
+  margin-bottom: 8px;
+}
+
+.upload-box p {
+  color: #858fa2;
+  font-size: 13px;
+}
+
+.file-name {
+  margin-top: 12px;
+  color: #75d8ff;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+#videoInput {
+  display: none;
+}
+
+/* PREVIEW */
+
+.preview {
+  display: none;
+  margin-top: 20px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #05070b;
+  border: 1px solid #252c3a;
+}
+
+.preview video {
+  width: 100%;
+  max-height: 430px;
+  display: block;
+}
+
+/* SETTINGS */
+
+.settings {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 18px;
+}
+
+.setting {
+  background: #0b0f17;
+  border: 1px solid #222a38;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.setting-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 13px;
+}
+
+.setting-title span:first-child {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.setting-title span:last-child {
+  color: #7f8ba0;
+  font-size: 12px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 8px;
+}
+
+.option {
+  border: 1px solid #293244;
+  background: #111722;
+  color: #9ba5b7;
+  padding: 11px 5px;
+  border-radius: 11px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  transition: .2s;
+}
+
+.option:hover {
+  border-color: #6672ff;
+  color: white;
+}
+
+.option.active {
+  color: white;
+  border-color: #6c63ff;
+  background: linear-gradient(135deg,#29265c,#14324a);
+}
+
+/* AI */
+
+.ai-box {
+  margin-top: 18px;
+  border: 1px solid #273044;
+  background: linear-gradient(
+    135deg,
+    rgba(108,99,255,.08),
+    rgba(0,198,255,.05)
+  );
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.ai-info {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.ai-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #24234d;
+  font-size: 22px;
+}
+
+.ai-info h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.ai-info p {
+  color: #818c9f;
+  font-size: 11px;
+}
+
+/* SWITCH */
+
+.switch {
+  position: relative;
+  width: 52px;
+  height: 29px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #293141;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: .25s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  left: 4px;
+  top: 4px;
+  background: white;
+  border-radius: 50%;
+  transition: .25s;
+}
+
+.switch input:checked + .slider {
+  background: linear-gradient(90deg,#645bff,#00bff5);
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(23px);
+}
+
+/* BUTTON */
+
+.enhance-btn {
+  width: 100%;
+  border: 0;
+  margin-top: 23px;
+  padding: 17px;
+  border-radius: 15px;
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(90deg,#6258ff,#00bff5);
+  box-shadow: 0 12px 35px rgba(69,101,255,.25);
+  transition: .2s;
+}
+
+.enhance-btn:hover {
+  transform: translateY(-2px);
+}
+
+.enhance-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* PROGRESS */
+
+.progress-box {
+  display: none;
+  margin-top: 25px;
+  background: #0a0e15;
+  border: 1px solid #242c39;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.progress-percent {
+  color: #74d9ff;
+  font-weight: 700;
+}
+
+.progress-track {
+  height: 9px;
+  background: #202735;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg,#655bff,#00c7ff);
+  transition: width .3s;
+}
+
+.status {
+  color: #8994a8;
+  font-size: 11px;
+  margin-top: 10px;
+}
+
+/* RESULT */
+
+.result {
+  display: none;
+  margin-top: 25px;
+  text-align: center;
+  background: #0b1119;
+  border: 1px solid #263042;
+  border-radius: 20px;
+  padding: 23px;
+}
+
+.success-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto auto 12px;
+  background: #153c31;
+  color: #5effb4;
+  font-size: 25px;
+}
+
+.result h3 {
+  margin-bottom: 7px;
+}
+
+.result p {
+  color: #8792a5;
+  font-size: 12px;
+  margin-bottom: 17px;
+}
+
+.download-btn {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  padding: 13px 25px;
+  border-radius: 12px;
+  background: linear-gradient(90deg,#1b9d70,#13b98a);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* FOOTER */
+
+footer {
+  text-align: center;
+  margin-top: 28px;
+  color: #596477;
+  font-size: 11px;
+}
+
+/* MOBILE */
+
+@media (max-width:700px) {
+
+  .container {
+    width: 94%;
+    padding-top: 22px;
+  }
+
+  header {
+    margin-bottom: 25px;
+  }
+
+  .logo-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .logo-text h1 {
+    font-size: 18px;
+  }
+
+  .tiktok-btn {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .hero h2 {
+    font-size: 34px;
+  }
+
+  .hero p {
+    font-size: 13px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .settings {
+    grid-template-columns: 1fr;
+  }
+
+  .options {
+    grid-template-columns: repeat(4,1fr);
+  }
+
+  .upload-box {
+    min-height: 190px;
+  }
+}
+
+@media (max-width:400px) {
+
+  .logo-text p {
+    display: none;
+  }
+
+  .tiktok-btn span {
+    display: none;
+  }
+
+  .options {
+    gap: 5px;
+  }
+
+  .option {
+    font-size: 11px;
+    padding: 10px 2px;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <header>
+<header>
 
-    <div class="logo">
-      <div class="logo-icon">⚡</div>
+<div class="logo">
 
-      <div class="logo-text">
-        <h1>Video Enhance</h1>
-        <p>Professional Video Processing</p>
-      </div>
-    </div>
+<div class="logo-icon">
+⚡
+</div>
 
-    <!-- غيّر اسم الحساب بعدين إذا تبي -->
-    <a
-      class="tiktok-btn"
-      href="https://www.tiktok.com/"
-      target="_blank"
-    >
-      ♪ <span>TikTok</span>
-    </a>
+<div class="logo-text">
 
-  </header>
+<h1>
+Video Enhance
+</h1>
 
+<p>
+Professional Video Processing
+</p>
 
-  <section class="hero">
+</div>
 
-    <h2>طوّر جودة فيديوك</h2>
+</div>
 
-    <p>
-      ارفع الفيديو واختر الجودة و FPS ثم ابدأ المعالجة
-    </p>
+<a
+class="tiktok-btn"
+href="https://www.tiktok.com/@s_a8y"
+target="_blank"
+rel="noopener noreferrer"
+>
+♪ <span>TikTok</span>
+</a>
 
-  </section>
+</header>
 
 
-  <main class="card">
+<section class="hero">
 
-    <!-- UPLOAD -->
+<h2>
+طوّر جودة فيديوك
+</h2>
 
-    <div
-      class="upload-box"
-      id="uploadBox"
-    >
+<p>
+ارفع الفيديو واختر الجودة و FPS ثم ابدأ المعالجة
+</p>
 
-      <div>
+</section>
 
-        <div class="upload-icon">
-          🎬
-        </div>
 
-        <h3>
-          ارفع الفيديو هنا
-        </h3>
+<main class="card">
 
-        <p>
-          اضغط لاختيار فيديو أو اسحب الفيديو إلى هنا
-        </p>
 
-        <div
-          class="file-name"
-          id="fileName"
-        ></div>
+<div
+class="upload-box"
+id="uploadBox"
+>
 
-      </div>
+<div>
 
-      <input
-        type="file"
-        id="videoInput"
-        accept="video/*"
-      >
+<div class="upload-icon">
+🎬
+</div>
 
-    </div>
+<h3>
+ارفع الفيديو هنا
+</h3>
 
+<p>
+اضغط لاختيار فيديو أو اسحب الفيديو إلى هنا
+</p>
 
-    <!-- PREVIEW -->
+<div
+class="file-name"
+id="fileName"
+></div>
 
-    <div
-      class="preview"
-      id="previewBox"
-    >
+</div>
 
-      <video
-        id="previewVideo"
-        controls
-        playsinline
-      ></video>
+<input
+type="file"
+id="videoInput"
+accept="video/*"
+>
 
-    </div>
+</div>
 
 
-    <!-- SETTINGS -->
+<div
+class="preview"
+id="previewBox"
+>
 
-    <div class="settings">
+<video
+id="previewVideo"
+controls
+playsinline
+></video>
 
-      <!-- RESOLUTION -->
+</div>
 
-      <div class="setting">
 
-        <div class="setting-title">
+<div class="settings">
 
-          <span>دقة الفيديو</span>
 
-          <span id="resolutionText">
-            720p
-          </span>
+<div class="setting">
 
-        </div>
+<div class="setting-title">
 
-        <div class="options">
+<span>
+دقة الفيديو
+</span>
 
-          <button
-            class="option active"
-            data-resolution="720p"
-          >
-            720p
-          </button>
+<span id="resolutionText">
+720p
+</span>
 
-          <button
-            class="option"
-            data-resolution="1080p"
-          >
-            1080p
-          </button>
+</div>
 
-          <button
-            class="option"
-            data-resolution="4k"
-          >
-            4K
-          </button>
+<div class="options">
 
-          <button
-            class="option"
-            data-resolution="4k60"
-          >
-            4K+
-          </button>
+<button
+class="option active"
+data-resolution="720p"
+>
+720p
+</button>
 
-        </div>
+<button
+class="option"
+data-resolution="1080p"
+>
+1080p
+</button>
 
-      </div>
+<button
+class="option"
+data-resolution="4k"
+>
+4K
+</button>
 
+<button
+class="option"
+data-resolution="4k60"
+>
+4K+
+</button>
 
-      <!-- FPS -->
+</div>
 
-      <div class="setting">
+</div>
 
-        <div class="setting-title">
 
-          <span>معدل الإطارات</span>
+<div class="setting">
 
-          <span id="fpsText">
-            30 FPS
-          </span>
+<div class="setting-title">
 
-        </div>
+<span>
+معدل الإطارات
+</span>
 
-        <div class="options">
+<span id="fpsText">
+30 FPS
+</span>
 
-          <button
-            class="option active"
-            data-fps="30"
-          >
-            30
-          </button>
+</div>
 
-          <button
-            class="option"
-            data-fps="60"
-          >
-            60
-          </button>
+<div class="options">
 
-          <button
-            class="option"
-            data-fps="90"
-          >
-            90
-          </button>
+<button
+class="option active"
+data-fps="30"
+>
+30
+</button>
 
-          <button
-            class="option"
-            data-fps="120"
-          >
-            120
-          </button>
+<button
+class="option"
+data-fps="60"
+>
+60
+</button>
 
-        </div>
+<button
+class="option"
+data-fps="90"
+>
+90
+</button>
 
-      </div>
+<button
+class="option"
+data-fps="120"
+>
+120
+</button>
 
-    </div>
+</div>
 
+</div>
 
-    <!-- AI -->
+</div>
 
-    <div class="ai-box">
 
-      <div class="ai-info">
+<div class="ai-box">
 
-        <div class="ai-icon">
-          🤖
-        </div>
+<div class="ai-info">
 
-        <div>
+<div class="ai-icon">
+🤖
+</div>
 
-          <h3>
-            AI Enhancement
-          </h3>
+<div>
 
-          <p>
-            تحسين الفيديو باستخدام الذكاء الاصطناعي
-          </p>
+<h3>
+AI Enhancement
+</h3>
 
-        </div>
+<p>
+تحسين الفيديو باستخدام الذكاء الاصطناعي
+</p>
 
-      </div>
+</div>
 
+</div>
 
-      <label class="switch">
 
-        <input
-          type="checkbox"
-          id="aiToggle"
-        >
+<label class="switch">
 
-        <span class="slider"></span>
+<input
+type="checkbox"
+id="aiToggle"
+>
 
-      </label>
+<span class="slider"></span>
 
-    </div>
+</label>
 
+</div>
 
-    <!-- BUTTON -->
 
-    <button
-      class="enhance-btn"
-      id="enhanceBtn"
-      disabled
-    >
-      ✨ تحسين الفيديو
-    </button>
+<button
+class="enhance-btn"
+id="enhanceBtn"
+disabled
+>
+✨ تحسين الفيديو
+</button>
 
 
-    <!-- PROGRESS -->
+<div
+class="progress-box"
+id="progressBox"
+>
 
-    <div
-      class="progress-box"
-      id="progressBox"
-    >
+<div class="progress-top">
 
-      <div class="progress-top">
+<span>
+جاري معالجة الفيديو...
+</span>
 
-        <span>
-          جاري معالجة الفيديو...
-        </span>
+<span
+class="progress-percent"
+id="progressPercent"
+>
+0%
+</span>
 
-        <span
-          class="progress-percent"
-          id="progressPercent"
-        >
-          0%
-        </span>
+</div>
 
-      </div>
+<div class="progress-track">
 
-      <div class="progress-track">
+<div
+class="progress-bar"
+id="progressBar"
+></div>
 
-        <div
-          class="progress-bar"
-          id="progressBar"
-        ></div>
+</div>
 
-      </div>
+<div
+class="status"
+id="status"
+>
+جاري تجهيز الفيديو...
+</div>
 
-      <div
-        class="status"
-        id="status"
-      >
-        جاري تجهيز الفيديو...
-      </div>
+</div>
 
-    </div>
 
+<div
+class="result"
+id="resultBox"
+>
 
-    <!-- RESULT -->
+<div class="success-icon">
+✓
+</div>
 
-    <div
-      class="result"
-      id="resultBox"
-    >
+<h3>
+تم تحسين الفيديو
+</h3>
 
-      <div class="success-icon">
-        ✓
-      </div>
+<p>
+الفيديو جاهز للتحميل
+</p>
 
-      <h3>
-        تم تحسين الفيديو
-      </h3>
+<a
+class="download-btn"
+id="downloadBtn"
+href="#"
+>
+⬇ تحميل الفيديو
+</a>
 
-      <p>
-        الفيديو جاهز للتحميل
-      </p>
+</div>
 
-      <a
-        class="download-btn"
-        id="downloadBtn"
-        href="#"
-      >
-        ⬇ تحميل الفيديو
-      </a>
+</main>
 
-    </div>
 
-  </main>
-
-
-  <footer>
-    Video Enhance • Professional Video Processing
-  </footer>
+<footer>
+Video Enhance • Professional Video Processing
+</footer>
 
 </div>
 
 
 <script>
 
-  const uploadBox =
-    document.getElementById("uploadBox");
+const uploadBox =
+document.getElementById("uploadBox");
 
-  const videoInput =
-    document.getElementById("videoInput");
+const videoInput =
+document.getElementById("videoInput");
 
-  const fileName =
-    document.getElementById("fileName");
+const fileName =
+document.getElementById("fileName");
 
-  const previewBox =
-    document.getElementById("previewBox");
+const previewBox =
+document.getElementById("previewBox");
 
-  const previewVideo =
-    document.getElementById("previewVideo");
+const previewVideo =
+document.getElementById("previewVideo");
 
-  const enhanceBtn =
-    document.getElementById("enhanceBtn");
+const enhanceBtn =
+document.getElementById("enhanceBtn");
 
-  const aiToggle =
-    document.getElementById("aiToggle");
+const aiToggle =
+document.getElementById("aiToggle");
 
-  const progressBox =
-    document.getElementById("progressBox");
+const progressBox =
+document.getElementById("progressBox");
 
-  const progressBar =
-    document.getElementById("progressBar");
+const progressBar =
+document.getElementById("progressBar");
 
-  const progressPercent =
-    document.getElementById("progressPercent");
+const progressPercent =
+document.getElementById("progressPercent");
 
-  const status =
-    document.getElementById("status");
+const status =
+document.getElementById("status");
 
-  const resultBox =
-    document.getElementById("resultBox");
+const resultBox =
+document.getElementById("resultBox");
 
-  const downloadBtn =
-    document.getElementById("downloadBtn");
+const downloadBtn =
+document.getElementById("downloadBtn");
 
-  const resolutionText =
-    document.getElementById("resolutionText");
+const resolutionText =
+document.getElementById("resolutionText");
 
-  const fpsText =
-    document.getElementById("fpsText");
+const fpsText =
+document.getElementById("fpsText");
 
 
-  let selectedFile = null;
+let selectedFile = null;
 
-  let selectedResolution = "720p";
+let selectedResolution = "720p";
 
-  let selectedFps = 30;
+let selectedFps = 30;
 
 
-  /* UPLOAD */
+/* اختيار الفيديو */
 
-  uploadBox.addEventListener("click", () => {
-    videoInput.click();
-  });
+uploadBox.addEventListener(
+"click",
+() => {
+videoInput.click();
+}
+);
 
 
-  videoInput.addEventListener("change", () => {
+videoInput.addEventListener(
+"change",
+() => {
 
-    if (!videoInput.files.length) {
-      return;
-    }
+if (!videoInput.files.length) {
+return;
+}
 
-    setVideo(videoInput.files[0]);
+setVideo(videoInput.files[0]);
 
-  });
+}
+);
 
 
-  function setVideo(file) {
+function setVideo(file) {
 
-    if (!file.type.startsWith("video/")) {
+if (!file.type.startsWith("video/")) {
 
-      alert("اختر ملف فيديو فقط");
+alert("اختر ملف فيديو فقط");
 
-      return;
-    }
+return;
+}
 
-    selectedFile = file;
+selectedFile = file;
 
-    fileName.textContent =
-      "✓ " + file.name;
+fileName.textContent =
+"✓ " + file.name;
 
-    enhanceBtn.disabled = false;
+enhanceBtn.disabled = false;
 
-    const url =
-      URL.createObjectURL(file);
+const url =
+URL.createObjectURL(file);
 
-    previewVideo.src = url;
+previewVideo.src = url;
 
-    previewBox.style.display = "block";
+previewBox.style.display =
+"block";
 
-  }
+}
 
 
-  /* DRAG & DROP */
+/* السحب والإفلات */
 
-  uploadBox.addEventListener(
-    "dragover",
-    (event) => {
+uploadBox.addEventListener(
+"dragover",
+(event) => {
 
-      event.preventDefault();
+event.preventDefault();
 
-      uploadBox.classList.add("dragging");
+uploadBox.classList.add(
+"dragging"
+);
 
-    }
-  );
+}
+);
 
 
-  uploadBox.addEventListener(
-    "dragleave",
-    () => {
+uploadBox.addEventListener(
+"dragleave",
+() => {
 
-      uploadBox.classList.remove("dragging");
+uploadBox.classList.remove(
+"dragging"
+);
 
-    }
-  );
+}
+);
 
 
-  uploadBox.addEventListener(
-    "drop",
-    (event) => {
+uploadBox.addEventListener(
+"drop",
+(event) => {
 
-      event.preventDefault();
+event.preventDefault();
 
-      uploadBox.classList.remove("dragging");
+uploadBox.classList.remove(
+"dragging"
+);
 
-      const file =
-        event.dataTransfer.files[0];
+const file =
+event.dataTransfer.files[0];
 
-      if (file) {
-        setVideo(file);
-      }
+if (file) {
+setVideo(file);
+}
 
-    }
-  );
+}
+);
 
 
-  /* RESOLUTION */
+/* الدقة */
 
-  document
-    .querySelectorAll("[data-resolution]")
-    .forEach(button => {
+document
+.querySelectorAll("[data-resolution]")
+.forEach(button => {
 
-      button.addEventListener("click", () => {
+button.addEventListener(
+"click",
+() => {
 
-        document
-          .querySelectorAll("[data-resolution]")
-          .forEach(btn =>
-            btn.classList.remove("active")
-          );
+document
+.querySelectorAll("[data-resolution]")
+.forEach(btn =>
+btn.classList.remove("active")
+);
 
-        button.classList.add("active");
+button.classList.add("active");
 
-        selectedResolution =
-          button.dataset.resolution;
+selectedResolution =
+button.dataset.resolution;
 
-        resolutionText.textContent =
-          selectedResolution.toUpperCase();
+resolutionText.textContent =
+selectedResolution.toUpperCase();
 
-      });
+}
+);
 
-    });
+});
 
 
-  /* FPS */
+/* FPS */
 
-  document
-    .querySelectorAll("[data-fps]")
-    .forEach(button => {
+document
+.querySelectorAll("[data-fps]")
+.forEach(button => {
 
-      button.addEventListener("click", () => {
+button.addEventListener(
+"click",
+() => {
 
-        document
-          .querySelectorAll("[data-fps]")
-          .forEach(btn =>
-            btn.classList.remove("active")
-          );
+document
+.querySelectorAll("[data-fps]")
+.forEach(btn =>
+btn.classList.remove("active")
+);
 
-        button.classList.add("active");
+button.classList.add("active");
 
-        selectedFps =
-          Number(button.dataset.fps);
+selectedFps =
+Number(button.dataset.fps);
 
-        fpsText.textContent =
-          selectedFps + " FPS";
+fpsText.textContent =
+selectedFps + " FPS";
 
-      });
+}
+);
 
-    });
+});
 
 
-  /* ENHANCE */
+/* معالجة الفيديو */
 
-  enhanceBtn.addEventListener(
-    "click",
-    async () => {
+enhanceBtn.addEventListener(
+"click",
+async () => {
 
-      if (!selectedFile) {
+if (!selectedFile) {
 
-        alert("اختر فيديو أولاً");
+alert("اختر فيديو أولاً");
 
-        return;
-      }
+return;
+}
 
 
-      enhanceBtn.disabled = true;
+enhanceBtn.disabled = true;
 
-      progressBox.style.display = "block";
+progressBox.style.display =
+"block";
 
-      resultBox.style.display = "none";
+resultBox.style.display =
+"none";
 
-      progressBar.style.width = "5%";
+progressBar.style.width =
+"5%";
 
-      progressPercent.textContent = "5%";
+progressPercent.textContent =
+"5%";
 
-      status.textContent =
-        "جاري رفع الفيديو...";
+status.textContent =
+"جاري رفع الفيديو...";
 
 
-      const formData =
-        new FormData();
+const formData =
+new FormData();
 
-      formData.append(
-        "video",
-        selectedFile
-      );
 
-      formData.append(
-        "resolution",
-        selectedResolution
-      );
+formData.append(
+"video",
+selectedFile
+);
 
-      formData.append(
-        "fps",
-        selectedFps
-      );
 
-      formData.append(
-        "ai",
-        aiToggle.checked
-      );
+formData.append(
+"resolution",
+selectedResolution
+);
 
 
-      try {
+formData.append(
+"fps",
+selectedFps
+);
 
-        const response =
-          await fetch(
-            "/api/enhance",
-            {
-              method: "POST",
-              body: formData
-            }
-          );
 
+formData.append(
+"ai",
+aiToggle.checked
+);
 
-        progressBar.style.width =
-          "35%";
 
-        progressPercent.textContent =
-          "35%";
+try {
 
-        status.textContent =
-          "جاري معالجة الفيديو...";
+const response =
+await fetch(
+"/api/enhance",
+{
+method: "POST",
+body: formData
+}
+);
 
 
-        const data =
-          await response.json();
+progressBar.style.width =
+"35%";
 
+progressPercent.textContent =
+"35%";
 
-        if (!response.ok) {
+status.textContent =
+"جاري معالجة الفيديو...";
 
-          throw new Error(
-            data.error ||
-            "حدث خطأ أثناء المعالجة"
-          );
 
-        }
+const data =
+await response.json();
 
 
-        progressBar.style.width =
-          "100%";
+if (!response.ok) {
 
-        progressPercent.textContent =
-          "100%";
+throw new Error(
+data.error ||
+"حدث خطأ أثناء المعالجة"
+);
 
-        status.textContent =
-          "اكتملت المعالجة";
+}
 
 
-        setTimeout(() => {
+progressBar.style.width =
+"100%";
 
-          progressBox.style.display =
-            "none";
+progressPercent.textContent =
+"100%";
 
-          resultBox.style.display =
-            "block";
+status.textContent =
+"اكتملت المعالجة";
 
-          downloadBtn.href =
-            data.download;
 
-        }, 500);
+setTimeout(
+() => {
 
+progressBox.style.display =
+"none";
 
-      } catch (error) {
+resultBox.style.display =
+"block";
 
-        progressBox.style.display =
-          "none";
+downloadBtn.href =
+data.download;
 
-        enhanceBtn.disabled = false;
+},
+500
+);
 
-        alert(
-          error.message ||
-          "حدث خطأ أثناء معالجة الفيديو"
-        );
 
-      }
+}
+catch (error) {
 
-    }
-  );
+progressBox.style.display =
+"none";
+
+enhanceBtn.disabled =
+false;
+
+alert(
+error.message ||
+"حدث خطأ أثناء معالجة الفيديو"
+);
+
+}
+
+}
+);
 
 </script>
 
