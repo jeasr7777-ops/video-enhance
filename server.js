@@ -1,16 +1,18 @@
 const express = require("express");
 const multer = require("multer");
 const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
 const app = express();
-
 const PORT = process.env.PORT || 10000;
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+const FFMPEG_PATH = "/usr/bin/ffmpeg";
+
+if (fs.existsSync(FFMPEG_PATH)) {
+  ffmpeg.setFfmpegPath(FFMPEG_PATH);
+}
 
 const publicDir = path.join(__dirname, "public");
 const uploadsDir = path.join(__dirname, "uploads");
@@ -56,9 +58,9 @@ app.use(express.json());
 app.use(express.static(publicDir));
 
 
-// ================================
-// HEALTH CHECK
-// ================================
+// ========================================
+// HEALTH
+// ========================================
 
 app.get("/api/health", function (req, res) {
   res.json({
@@ -69,9 +71,9 @@ app.get("/api/health", function (req, res) {
 });
 
 
-// ================================
-// VIDEO PROCESSING
-// ================================
+// ========================================
+// ENHANCE VIDEO
+// ========================================
 
 app.post(
   "/api/enhance",
@@ -80,17 +82,25 @@ app.post(
 
     if (!req.file) {
       return res.status(400).json({
+        success: false,
         error: "لم يتم رفع فيديو"
       });
     }
 
     const input = req.file.path;
 
-    const resolution =
-      String(req.body.resolution || "720p");
+    let operation = String(
+      req.body.operation || ""
+    );
 
-    const fps =
-      parseInt(req.body.fps || "30", 10);
+    let resolution = String(
+      req.body.resolution || "720p"
+    );
+
+    let fps = parseInt(
+      req.body.fps || "30",
+      10
+    );
 
     const tiktok =
       String(req.body.tiktok || "false") === "true";
@@ -101,13 +111,45 @@ app.post(
     const smooth =
       String(req.body.smooth || "false") === "true";
 
-    const allowedFps = [30, 60, 90, 120, 240];
 
-    const selectedFps =
-      allowedFps.includes(fps) ? fps : 30;
+    // ========================================
+    // FPS
+    // ========================================
 
-    const id =
-      path.parse(req.file.filename).name;
+    const allowedFps = [
+      30,
+      60,
+      120,
+      240
+    ];
+
+    if (!allowedFps.includes(fps)) {
+      fps = 30;
+    }
+
+
+    // ========================================
+    // FRAME INTERPOLATION
+    // ========================================
+
+    let useInterpolation = false;
+
+    if (
+      operation === "fps" ||
+      operation === "smooth" ||
+      smooth === true
+    ) {
+      useInterpolation = true;
+    }
+
+
+    // ========================================
+    // OUTPUT
+    // ========================================
+
+    const id = path.parse(
+      req.file.filename
+    ).name;
 
     const outputName =
       id + "-processed.mp4";
@@ -120,12 +162,16 @@ app.post(
     console.log("================================");
     console.log("VIDEO ENHANCE");
     console.log("================================");
-    console.log("Input:", input);
+    console.log("Operation:", operation);
     console.log("Resolution:", resolution);
-    console.log("FPS:", selectedFps);
+    console.log("FPS:", fps);
     console.log("TikTok:", tiktok);
     console.log("HD:", hd);
-    console.log("Smooth:", smooth);
+    console.log(
+      "Interpolation:",
+      useInterpolation
+    );
+    console.log("Input:", input);
     console.log("Output:", output);
     console.log("================================");
 
@@ -135,11 +181,14 @@ app.post(
     const filters = [];
 
 
-    // =================================
+    // ========================================
     // TIKTOK READY
-    // =================================
+    // ========================================
 
-    if (tiktok) {
+    if (
+      tiktok ||
+      operation === "tiktok"
+    ) {
 
       filters.push(
         "scale=1080:1920:" +
@@ -154,14 +203,19 @@ app.post(
       );
 
       filters.push("setsar=1");
+
+      fps = 30;
     }
 
 
-    // =================================
+    // ========================================
     // NORMAL RESOLUTION
-    // =================================
+    // ========================================
 
-    if (!tiktok) {
+    if (
+      !tiktok &&
+      operation !== "tiktok"
+    ) {
 
       if (resolution === "720p") {
 
@@ -176,7 +230,6 @@ app.post(
           "(ow-iw)/2:" +
           "(oh-ih)/2"
         );
-
       }
 
 
@@ -193,54 +246,45 @@ app.post(
           "(ow-iw)/2:" +
           "(oh-ih)/2"
         );
-
-      }
-
-
-      if (
-        resolution === "4k" ||
-        resolution === "4k60"
-      ) {
-
-        filters.push(
-          "scale=3840:2160:" +
-          "force_original_aspect_ratio=decrease:" +
-          "flags=lanczos"
-        );
-
-        filters.push(
-          "pad=3840:2160:" +
-          "(ow-iw)/2:" +
-          "(oh-ih)/2"
-        );
-
       }
 
       filters.push("setsar=1");
     }
 
 
-    // =================================
+    // ========================================
     // HD
-    // =================================
+    // ========================================
 
-    if (hd) {
+    if (
+      hd ||
+      operation === "hd"
+    ) {
 
       filters.push(
-        "unsharp=5:5:0.7:5:5:0.0"
+        "unsharp=5:5:0.5:5:5:0"
       );
     }
 
 
-    // =================================
-    // SMOOTH / FRAME INTERPOLATION
-    // =================================
+    // ========================================
+    // FRAME INTERPOLATION
+    // ========================================
 
-    if (smooth) {
+    if (
+      useInterpolation &&
+      fps > 30
+    ) {
+
+      console.log(
+        "Frame interpolation:",
+        fps,
+        "FPS"
+      );
 
       filters.push(
         "minterpolate=" +
-        "fps=" + selectedFps +
+        "fps=" + fps +
         ":mi_mode=mci" +
         ":mc_mode=aobmc" +
         ":me_mode=bidir" +
@@ -249,15 +293,19 @@ app.post(
     }
 
 
-    if (filters.length > 0) {
+    // ========================================
+    // APPLY FILTERS
+    // ========================================
 
-      command = command.videoFilters(filters);
+    if (filters.length > 0) {
+      command =
+        command.videoFilters(filters);
     }
 
 
-    // =================================
-    // VIDEO CODEC
-    // =================================
+    // ========================================
+    // CODECS
+    // ========================================
 
     command =
       command
@@ -265,115 +313,114 @@ app.post(
         .audioCodec("aac");
 
 
-    // =================================
+    // ========================================
     // OUTPUT OPTIONS
-    // =================================
+    // ========================================
 
     const outputOptions = [
-      "-pix_fmt yuv420p",
-      "-movflags +faststart",
-      "-b:a 192k"
+
+      "-pix_fmt",
+      "yuv420p",
+
+      "-movflags",
+      "+faststart",
+
+      "-b:a",
+      "128k",
+
+      // تقليل استهلاك المعالج
+      "-threads",
+      "1",
+
+      // أسرع من medium
+      "-preset",
+      "veryfast"
     ];
 
 
-    if (smooth) {
+    // ========================================
+    // FPS OUTPUT
+    // ========================================
 
-      outputOptions.push(
-        "-r",
-        String(selectedFps)
-      );
-
-    } else {
-
-      if (tiktok) {
-
-        outputOptions.push(
-          "-r",
-          "60"
-        );
-
-      } else {
-
-        outputOptions.push(
-          "-r",
-          String(selectedFps)
-        );
-      }
-    }
+    outputOptions.push(
+      "-r",
+      String(fps)
+    );
 
 
-    // =================================
+    // ========================================
     // QUALITY
-    // =================================
+    // ========================================
 
-    if (hd) {
+    if (
+      hd ||
+      operation === "hd"
+    ) {
 
       outputOptions.push(
         "-crf",
-        "17"
-      );
-
-      outputOptions.push(
-        "-preset",
-        "medium"
+        "19"
       );
 
     } else {
 
       outputOptions.push(
         "-crf",
-        "20"
-      );
-
-      outputOptions.push(
-        "-preset",
-        "medium"
+        "21"
       );
     }
 
 
     command =
-      command.outputOptions(outputOptions);
+      command.outputOptions(
+        outputOptions
+      );
 
 
-    // =================================
-    // START
-    // =================================
+    // ========================================
+    // FFMPEG START
+    // ========================================
 
     command.on(
       "start",
       function (commandLine) {
 
         console.log("");
-        console.log("FFmpeg started:");
+        console.log(
+          "FFmpeg started:"
+        );
         console.log(commandLine);
         console.log("");
       }
     );
 
 
-    // =================================
+    // ========================================
     // PROGRESS
-    // =================================
+    // ========================================
 
     command.on(
       "progress",
       function (progress) {
 
-        if (progress.percent) {
+        if (
+          progress &&
+          typeof progress.percent === "number"
+        ) {
 
           console.log(
             "Processing:",
-            Math.round(progress.percent) + "%"
+            Math.round(progress.percent) +
+            "%"
           );
         }
       }
     );
 
 
-    // =================================
+    // ========================================
     // FINISHED
-    // =================================
+    // ========================================
 
     command.on(
       "end",
@@ -381,7 +428,9 @@ app.post(
 
         console.log("");
         console.log("================================");
-        console.log("PROCESSING COMPLETED");
+        console.log(
+          "PROCESSING COMPLETED"
+        );
         console.log("================================");
 
 
@@ -391,13 +440,21 @@ app.post(
             "Output file was not created"
           );
 
+          try {
+            if (fs.existsSync(input)) {
+              fs.unlinkSync(input);
+            }
+          } catch (e) {}
+
           return res.status(500).json({
+            success: false,
             error:
               "تمت المعالجة ولكن لم يتم إنشاء الفيديو"
           });
         }
 
 
+        // حذف الفيديو الأصلي
         try {
 
           if (fs.existsSync(input)) {
@@ -419,16 +476,17 @@ app.post(
 
           download:
             "/api/download/" +
-            encodeURIComponent(outputName)
-
+            encodeURIComponent(
+              outputName
+            )
         });
       }
     );
 
 
-    // =================================
-    // ERROR
-    // =================================
+    // ========================================
+    // FFMPEG ERROR
+    // ========================================
 
     command.on(
       "error",
@@ -437,6 +495,7 @@ app.post(
         console.error("");
         console.error("================================");
         console.error("FFMPEG ERROR");
+        console.error("================================");
         console.error(error);
         console.error("================================");
         console.error("");
@@ -464,30 +523,55 @@ app.post(
 
           return res.status(500).json({
 
+            success: false,
+
             error:
               "حدث خطأ أثناء معالجة الفيديو",
 
             details:
               error.message
-
           });
         }
       }
     );
 
 
-    // =================================
-    // RUN FFMPEG
-    // =================================
+    // ========================================
+    // START FFMPEG
+    // ========================================
 
-    command.save(output);
+    try {
+
+      command.save(output);
+
+    } catch (error) {
+
+      console.error(
+        "FFmpeg start error:",
+        error
+      );
+
+      if (!res.headersSent) {
+
+        return res.status(500).json({
+
+          success: false,
+
+          error:
+            "تعذر بدء معالجة الفيديو",
+
+          details:
+            error.message
+        });
+      }
+    }
   }
 );
 
 
-// =================================
+// ========================================
 // DOWNLOAD
-// =================================
+// ========================================
 
 app.get(
   "/api/download/:file",
@@ -497,13 +581,20 @@ app.get(
       path.basename(req.params.file);
 
     const file =
-      path.join(outputsDir, filename);
+      path.join(
+        outputsDir,
+        filename
+      );
 
 
     if (!fs.existsSync(file)) {
 
       return res.status(404).json({
-        error: "الفيديو غير موجود"
+
+        success: false,
+
+        error:
+          "الفيديو غير موجود"
       });
     }
 
@@ -516,9 +607,9 @@ app.get(
 );
 
 
-// =================================
+// ========================================
 // ERROR HANDLER
-// =================================
+// ========================================
 
 app.use(
   function (error, req, res, next) {
@@ -535,30 +626,32 @@ app.use(
 
       return res.status(400).json({
 
+        success: false,
+
         error:
           "حدث خطأ أثناء رفع الفيديو",
 
         details:
           error.message
-
       });
     }
 
 
     return res.status(500).json({
 
+      success: false,
+
       error:
         error.message ||
         "حدث خطأ في السيرفر"
-
     });
   }
 );
 
 
-// =================================
+// ========================================
 // START SERVER
-// =================================
+// ========================================
 
 app.listen(
   PORT,
